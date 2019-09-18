@@ -16,7 +16,9 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  company: (where?: CompanyWhereInput) => Promise<boolean>;
   post: (where?: PostWhereInput) => Promise<boolean>;
+  spot: (where?: SpotWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
@@ -39,6 +41,25 @@ export interface Prisma {
    * Queries
    */
 
+  company: (where: CompanyWhereUniqueInput) => CompanyNullablePromise;
+  companies: (args?: {
+    where?: CompanyWhereInput;
+    orderBy?: CompanyOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Company>;
+  companiesConnection: (args?: {
+    where?: CompanyWhereInput;
+    orderBy?: CompanyOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => CompanyConnectionPromise;
   post: (where: PostWhereUniqueInput) => PostNullablePromise;
   posts: (args?: {
     where?: PostWhereInput;
@@ -58,6 +79,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PostConnectionPromise;
+  spot: (where: SpotWhereUniqueInput) => SpotNullablePromise;
+  spots: (args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Spot>;
+  spotsConnection: (args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => SpotConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -83,6 +123,22 @@ export interface Prisma {
    * Mutations
    */
 
+  createCompany: (data: CompanyCreateInput) => CompanyPromise;
+  updateCompany: (args: {
+    data: CompanyUpdateInput;
+    where: CompanyWhereUniqueInput;
+  }) => CompanyPromise;
+  updateManyCompanies: (args: {
+    data: CompanyUpdateManyMutationInput;
+    where?: CompanyWhereInput;
+  }) => BatchPayloadPromise;
+  upsertCompany: (args: {
+    where: CompanyWhereUniqueInput;
+    create: CompanyCreateInput;
+    update: CompanyUpdateInput;
+  }) => CompanyPromise;
+  deleteCompany: (where: CompanyWhereUniqueInput) => CompanyPromise;
+  deleteManyCompanies: (where?: CompanyWhereInput) => BatchPayloadPromise;
   createPost: (data: PostCreateInput) => PostPromise;
   updatePost: (args: {
     data: PostUpdateInput;
@@ -99,6 +155,22 @@ export interface Prisma {
   }) => PostPromise;
   deletePost: (where: PostWhereUniqueInput) => PostPromise;
   deleteManyPosts: (where?: PostWhereInput) => BatchPayloadPromise;
+  createSpot: (data: SpotCreateInput) => SpotPromise;
+  updateSpot: (args: {
+    data: SpotUpdateInput;
+    where: SpotWhereUniqueInput;
+  }) => SpotPromise;
+  updateManySpots: (args: {
+    data: SpotUpdateManyMutationInput;
+    where?: SpotWhereInput;
+  }) => BatchPayloadPromise;
+  upsertSpot: (args: {
+    where: SpotWhereUniqueInput;
+    create: SpotCreateInput;
+    update: SpotUpdateInput;
+  }) => SpotPromise;
+  deleteSpot: (where: SpotWhereUniqueInput) => SpotPromise;
+  deleteManySpots: (where?: SpotWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -124,9 +196,15 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  company: (
+    where?: CompanySubscriptionWhereInput
+  ) => CompanySubscriptionPayloadSubscription;
   post: (
     where?: PostSubscriptionWhereInput
   ) => PostSubscriptionPayloadSubscription;
+  spot: (
+    where?: SpotSubscriptionWhereInput
+  ) => SpotSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -139,6 +217,18 @@ export interface ClientConstructor<T> {
 /**
  * Types
  */
+
+export type Role = "USER" | "ADMIN";
+
+export type SpotOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type PostOrderByInput =
   | "id_ASC"
@@ -154,6 +244,16 @@ export type PostOrderByInput =
   | "content_ASC"
   | "content_DESC";
 
+export type CompanyOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -162,57 +262,27 @@ export type UserOrderByInput =
   | "password_ASC"
   | "password_DESC"
   | "name_ASC"
-  | "name_DESC";
+  | "name_DESC"
+  | "role_ASC"
+  | "role_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface UserUpdateOneRequiredWithoutPostsInput {
-  create?: Maybe<UserCreateWithoutPostsInput>;
-  update?: Maybe<UserUpdateWithoutPostsDataInput>;
-  upsert?: Maybe<UserUpsertWithoutPostsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
+export interface PostUpdateWithoutAuthorDataInput {
+  published?: Maybe<Boolean>;
+  title?: Maybe<String>;
+  content?: Maybe<String>;
 }
 
-export type PostWhereUniqueInput = AtLeastOne<{
+export type CompanyWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
-export interface PostUpdateWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput;
-  data: PostUpdateWithoutAuthorDataInput;
-}
-
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  name: String;
-  posts?: Maybe<PostCreateManyWithoutAuthorInput>;
-}
-
-export interface PostUpdateManyWithoutAuthorInput {
-  create?: Maybe<PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput>;
-  delete?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
-  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
-  set?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
-  disconnect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
-  update?: Maybe<
-    | PostUpdateWithWhereUniqueWithoutAuthorInput[]
-    | PostUpdateWithWhereUniqueWithoutAuthorInput
-  >;
-  upsert?: Maybe<
-    | PostUpsertWithWhereUniqueWithoutAuthorInput[]
-    | PostUpsertWithWhereUniqueWithoutAuthorInput
-  >;
-  deleteMany?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
-  updateMany?: Maybe<
-    PostUpdateManyWithWhereNestedInput[] | PostUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput;
-  create: UserCreateWithoutPostsInput;
+export interface PostUpdateManyDataInput {
+  published?: Maybe<Boolean>;
+  title?: Maybe<String>;
+  content?: Maybe<String>;
 }
 
 export interface UserWhereInput {
@@ -272,42 +342,299 @@ export interface UserWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  role?: Maybe<Role>;
+  role_not?: Maybe<Role>;
+  role_in?: Maybe<Role[] | Role>;
+  role_not_in?: Maybe<Role[] | Role>;
   posts_every?: Maybe<PostWhereInput>;
   posts_some?: Maybe<PostWhereInput>;
   posts_none?: Maybe<PostWhereInput>;
+  spots_every?: Maybe<SpotWhereInput>;
+  spots_some?: Maybe<SpotWhereInput>;
+  spots_none?: Maybe<SpotWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
-export interface PostSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<PostWhereInput>;
-  AND?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
-  OR?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
-  NOT?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
+export interface PostCreateManyWithoutAuthorInput {
+  create?: Maybe<PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput>;
+  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
 }
 
-export interface PostCreateInput {
+export interface CompanyCreateWithoutSpotsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+}
+
+export interface PostCreateWithoutAuthorInput {
   id?: Maybe<ID_Input>;
   published?: Maybe<Boolean>;
   title: String;
   content: String;
-  author: UserCreateOneWithoutPostsInput;
 }
 
-export interface PostUpdateManyDataInput {
+export interface UserUpsertWithoutSpotsInput {
+  update: UserUpdateWithoutSpotsDataInput;
+  create: UserCreateWithoutSpotsInput;
+}
+
+export interface CompanyUpdateInput {
+  name?: Maybe<String>;
+  spots?: Maybe<SpotUpdateManyWithoutCompanyInput>;
+}
+
+export interface SpotSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<SpotWhereInput>;
+  AND?: Maybe<SpotSubscriptionWhereInput[] | SpotSubscriptionWhereInput>;
+  OR?: Maybe<SpotSubscriptionWhereInput[] | SpotSubscriptionWhereInput>;
+  NOT?: Maybe<SpotSubscriptionWhereInput[] | SpotSubscriptionWhereInput>;
+}
+
+export interface SpotUpdateManyWithoutCompanyInput {
+  create?: Maybe<
+    SpotCreateWithoutCompanyInput[] | SpotCreateWithoutCompanyInput
+  >;
+  delete?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  connect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  set?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  disconnect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  update?: Maybe<
+    | SpotUpdateWithWhereUniqueWithoutCompanyInput[]
+    | SpotUpdateWithWhereUniqueWithoutCompanyInput
+  >;
+  upsert?: Maybe<
+    | SpotUpsertWithWhereUniqueWithoutCompanyInput[]
+    | SpotUpsertWithWhereUniqueWithoutCompanyInput
+  >;
+  deleteMany?: Maybe<SpotScalarWhereInput[] | SpotScalarWhereInput>;
+  updateMany?: Maybe<
+    SpotUpdateManyWithWhereNestedInput[] | SpotUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CompanyWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  spots_every?: Maybe<SpotWhereInput>;
+  spots_some?: Maybe<SpotWhereInput>;
+  spots_none?: Maybe<SpotWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
+  OR?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
+  NOT?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
+}
+
+export interface SpotUpdateWithWhereUniqueWithoutCompanyInput {
+  where: SpotWhereUniqueInput;
+  data: SpotUpdateWithoutCompanyDataInput;
+}
+
+export interface SpotWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  company?: Maybe<CompanyWhereInput>;
+  user?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SpotWhereInput[] | SpotWhereInput>;
+  OR?: Maybe<SpotWhereInput[] | SpotWhereInput>;
+  NOT?: Maybe<SpotWhereInput[] | SpotWhereInput>;
+}
+
+export interface SpotUpdateWithoutCompanyDataInput {
+  name?: Maybe<String>;
+  user?: Maybe<UserUpdateOneRequiredWithoutSpotsInput>;
+}
+
+export interface UserUpdateInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  name?: Maybe<String>;
+  role?: Maybe<Role>;
+  posts?: Maybe<PostUpdateManyWithoutAuthorInput>;
+  spots?: Maybe<SpotUpdateManyWithoutUserInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutSpotsInput {
+  create?: Maybe<UserCreateWithoutSpotsInput>;
+  update?: Maybe<UserUpdateWithoutSpotsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutSpotsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface SpotUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface UserUpdateWithoutSpotsDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  name?: Maybe<String>;
+  role?: Maybe<Role>;
+  posts?: Maybe<PostUpdateManyWithoutAuthorInput>;
+}
+
+export interface SpotUpdateInput {
+  name?: Maybe<String>;
+  company?: Maybe<CompanyUpdateOneRequiredWithoutSpotsInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutSpotsInput>;
+}
+
+export interface PostUpdateManyWithoutAuthorInput {
+  create?: Maybe<PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput>;
+  delete?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  set?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  disconnect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
+  update?: Maybe<
+    | PostUpdateWithWhereUniqueWithoutAuthorInput[]
+    | PostUpdateWithWhereUniqueWithoutAuthorInput
+  >;
+  upsert?: Maybe<
+    | PostUpsertWithWhereUniqueWithoutAuthorInput[]
+    | PostUpsertWithWhereUniqueWithoutAuthorInput
+  >;
+  deleteMany?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
+  updateMany?: Maybe<
+    PostUpdateManyWithWhereNestedInput[] | PostUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PostUpdateManyMutationInput {
   published?: Maybe<Boolean>;
   title?: Maybe<String>;
   content?: Maybe<String>;
 }
 
-export interface UserCreateOneWithoutPostsInput {
-  create?: Maybe<UserCreateWithoutPostsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
+export interface PostUpdateWithWhereUniqueWithoutAuthorInput {
+  where: PostWhereUniqueInput;
+  data: PostUpdateWithoutAuthorDataInput;
+}
+
+export interface UserUpsertWithoutPostsInput {
+  update: UserUpdateWithoutPostsDataInput;
+  create: UserCreateWithoutPostsInput;
+}
+
+export interface SpotUpdateManyWithoutUserInput {
+  create?: Maybe<SpotCreateWithoutUserInput[] | SpotCreateWithoutUserInput>;
+  delete?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  connect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  set?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  disconnect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+  update?: Maybe<
+    | SpotUpdateWithWhereUniqueWithoutUserInput[]
+    | SpotUpdateWithWhereUniqueWithoutUserInput
+  >;
+  upsert?: Maybe<
+    | SpotUpsertWithWhereUniqueWithoutUserInput[]
+    | SpotUpsertWithWhereUniqueWithoutUserInput
+  >;
+  deleteMany?: Maybe<SpotScalarWhereInput[] | SpotScalarWhereInput>;
+  updateMany?: Maybe<
+    SpotUpdateManyWithWhereNestedInput[] | SpotUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CompanyUpsertWithoutSpotsInput {
+  update: CompanyUpdateWithoutSpotsDataInput;
+  create: CompanyCreateWithoutSpotsInput;
+}
+
+export interface PostUpsertWithWhereUniqueWithoutAuthorInput {
+  where: PostWhereUniqueInput;
+  update: PostUpdateWithoutAuthorDataInput;
+  create: PostCreateWithoutAuthorInput;
+}
+
+export interface CompanyUpdateWithoutSpotsDataInput {
+  name?: Maybe<String>;
 }
 
 export interface PostScalarWhereInput {
@@ -376,24 +703,21 @@ export interface PostScalarWhereInput {
   NOT?: Maybe<PostScalarWhereInput[] | PostScalarWhereInput>;
 }
 
-export interface UserCreateWithoutPostsInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  name: String;
+export interface SpotUpdateWithoutUserDataInput {
+  name?: Maybe<String>;
+  company?: Maybe<CompanyUpdateOneRequiredWithoutSpotsInput>;
 }
 
-export interface PostUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput;
-  update: PostUpdateWithoutAuthorDataInput;
-  create: PostCreateWithoutAuthorInput;
+export interface PostUpdateManyWithWhereNestedInput {
+  where: PostScalarWhereInput;
+  data: PostUpdateManyDataInput;
 }
 
-export interface PostUpdateInput {
-  published?: Maybe<Boolean>;
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  author?: Maybe<UserUpdateOneRequiredWithoutPostsInput>;
+export interface SpotCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    SpotCreateWithoutCompanyInput[] | SpotCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
 }
 
 export interface PostWhereInput {
@@ -463,46 +787,17 @@ export interface PostWhereInput {
   NOT?: Maybe<PostWhereInput[] | PostWhereInput>;
 }
 
-export interface UserUpdateInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  name?: Maybe<String>;
-  posts?: Maybe<PostUpdateManyWithoutAuthorInput>;
-}
-
-export interface UserUpdateManyMutationInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  name?: Maybe<String>;
-}
-
-export interface PostCreateManyWithoutAuthorInput {
-  create?: Maybe<PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput>;
-  connect?: Maybe<PostWhereUniqueInput[] | PostWhereUniqueInput>;
-}
-
-export interface PostUpdateManyMutationInput {
-  published?: Maybe<Boolean>;
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-}
-
-export interface PostCreateWithoutAuthorInput {
-  id?: Maybe<ID_Input>;
-  published?: Maybe<Boolean>;
-  title: String;
-  content: String;
+export interface UserCreateOneWithoutSpotsInput {
+  create?: Maybe<UserCreateWithoutSpotsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
 }
 
 export interface UserUpdateWithoutPostsDataInput {
   email?: Maybe<String>;
   password?: Maybe<String>;
   name?: Maybe<String>;
-}
-
-export interface PostUpdateManyWithWhereNestedInput {
-  where: PostScalarWhereInput;
-  data: PostUpdateManyDataInput;
+  role?: Maybe<Role>;
+  spots?: Maybe<SpotUpdateManyWithoutUserInput>;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -516,16 +811,225 @@ export interface UserSubscriptionWhereInput {
   NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
 }
 
-export interface PostUpdateWithoutAuthorDataInput {
+export interface SpotUpsertWithWhereUniqueWithoutCompanyInput {
+  where: SpotWhereUniqueInput;
+  update: SpotUpdateWithoutCompanyDataInput;
+  create: SpotCreateWithoutCompanyInput;
+}
+
+export interface CompanySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  OR?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  NOT?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+}
+
+export interface SpotScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SpotScalarWhereInput[] | SpotScalarWhereInput>;
+  OR?: Maybe<SpotScalarWhereInput[] | SpotScalarWhereInput>;
+  NOT?: Maybe<SpotScalarWhereInput[] | SpotScalarWhereInput>;
+}
+
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  name: String;
+  role?: Maybe<Role>;
+  posts?: Maybe<PostCreateManyWithoutAuthorInput>;
+  spots?: Maybe<SpotCreateManyWithoutUserInput>;
+}
+
+export interface SpotUpdateManyWithWhereNestedInput {
+  where: SpotScalarWhereInput;
+  data: SpotUpdateManyDataInput;
+}
+
+export interface SpotCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  company: CompanyCreateOneWithoutSpotsInput;
+  user: UserCreateOneWithoutSpotsInput;
+}
+
+export interface SpotUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface SpotUpsertWithWhereUniqueWithoutUserInput {
+  where: SpotWhereUniqueInput;
+  update: SpotUpdateWithoutUserDataInput;
+  create: SpotCreateWithoutUserInput;
+}
+
+export interface CompanyUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface CompanyUpdateOneRequiredWithoutSpotsInput {
+  create?: Maybe<CompanyCreateWithoutSpotsInput>;
+  update?: Maybe<CompanyUpdateWithoutSpotsDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutSpotsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutPostsInput {
+  create?: Maybe<UserCreateWithoutPostsInput>;
+  update?: Maybe<UserUpdateWithoutPostsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutPostsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface CompanyCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  spots?: Maybe<SpotCreateManyWithoutCompanyInput>;
+}
+
+export interface PostUpdateInput {
   published?: Maybe<Boolean>;
   title?: Maybe<String>;
   content?: Maybe<String>;
+  author?: Maybe<UserUpdateOneRequiredWithoutPostsInput>;
+}
+
+export interface UserCreateWithoutSpotsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  name: String;
+  role?: Maybe<Role>;
+  posts?: Maybe<PostCreateManyWithoutAuthorInput>;
+}
+
+export interface PostCreateInput {
+  id?: Maybe<ID_Input>;
+  published?: Maybe<Boolean>;
+  title: String;
+  content: String;
+  author: UserCreateOneWithoutPostsInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  name?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface UserCreateOneWithoutPostsInput {
+  create?: Maybe<UserCreateWithoutPostsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export type SpotWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface CompanyCreateOneWithoutSpotsInput {
+  create?: Maybe<CompanyCreateWithoutSpotsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface SpotCreateWithoutUserInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  company: CompanyCreateOneWithoutSpotsInput;
+}
+
+export interface SpotCreateManyWithoutUserInput {
+  create?: Maybe<SpotCreateWithoutUserInput[] | SpotCreateWithoutUserInput>;
+  connect?: Maybe<SpotWhereUniqueInput[] | SpotWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutPostsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  name: String;
+  role?: Maybe<Role>;
+  spots?: Maybe<SpotCreateManyWithoutUserInput>;
 }
 
 export type UserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   email?: Maybe<String>;
 }>;
+
+export type PostWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface PostSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PostWhereInput>;
+  AND?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
+  OR?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
+  NOT?: Maybe<PostSubscriptionWhereInput[] | PostSubscriptionWhereInput>;
+}
+
+export interface SpotCreateWithoutCompanyInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  user: UserCreateOneWithoutSpotsInput;
+}
+
+export interface SpotUpdateWithWhereUniqueWithoutUserInput {
+  where: SpotWhereUniqueInput;
+  data: SpotUpdateWithoutUserDataInput;
+}
 
 export interface NodeNode {
   id: ID_Output;
@@ -536,6 +1040,7 @@ export interface UserPreviousValues {
   email: String;
   password: String;
   name: String;
+  role: Role;
 }
 
 export interface UserPreviousValuesPromise
@@ -545,6 +1050,7 @@ export interface UserPreviousValuesPromise
   email: () => Promise<String>;
   password: () => Promise<String>;
   name: () => Promise<String>;
+  role: () => Promise<Role>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -554,37 +1060,260 @@ export interface UserPreviousValuesSubscription
   email: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
+  role: () => Promise<AsyncIterator<Role>>;
 }
 
-export interface PostPreviousValues {
+export interface PostConnection {
+  pageInfo: PageInfo;
+  edges: PostEdge[];
+}
+
+export interface PostConnectionPromise
+  extends Promise<PostConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PostEdge>>() => T;
+  aggregate: <T = AggregatePostPromise>() => T;
+}
+
+export interface PostConnectionSubscription
+  extends Promise<AsyncIterator<PostConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PostEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePostSubscription>() => T;
+}
+
+export interface Spot {
   id: ID_Output;
+  name: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  published: Boolean;
-  title: String;
-  content: String;
 }
 
-export interface PostPreviousValuesPromise
-  extends Promise<PostPreviousValues>,
-    Fragmentable {
+export interface SpotPromise extends Promise<Spot>, Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  company: <T = CompanyPromise>() => T;
+  user: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  published: () => Promise<Boolean>;
-  title: () => Promise<String>;
-  content: () => Promise<String>;
 }
 
-export interface PostPreviousValuesSubscription
-  extends Promise<AsyncIterator<PostPreviousValues>>,
+export interface SpotSubscription
+  extends Promise<AsyncIterator<Spot>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  company: <T = CompanySubscription>() => T;
+  user: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  published: () => Promise<AsyncIterator<Boolean>>;
-  title: () => Promise<AsyncIterator<String>>;
-  content: () => Promise<AsyncIterator<String>>;
+}
+
+export interface SpotNullablePromise
+  extends Promise<Spot | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  company: <T = CompanyPromise>() => T;
+  user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface AggregateCompany {
+  count: Int;
+}
+
+export interface AggregateCompanyPromise
+  extends Promise<AggregateCompany>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCompanySubscription
+  extends Promise<AsyncIterator<AggregateCompany>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CompanyEdge {
+  node: Company;
+  cursor: String;
+}
+
+export interface CompanyEdgePromise extends Promise<CompanyEdge>, Fragmentable {
+  node: <T = CompanyPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CompanyEdgeSubscription
+  extends Promise<AsyncIterator<CompanyEdge>>,
+    Fragmentable {
+  node: <T = CompanySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface SpotPreviousValues {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SpotPreviousValuesPromise
+  extends Promise<SpotPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SpotPreviousValuesSubscription
+  extends Promise<AsyncIterator<SpotPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserEdge {
+  node: User;
+  cursor: String;
+}
+
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CompanyConnection {
+  pageInfo: PageInfo;
+  edges: CompanyEdge[];
+}
+
+export interface CompanyConnectionPromise
+  extends Promise<CompanyConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CompanyEdge>>() => T;
+  aggregate: <T = AggregateCompanyPromise>() => T;
+}
+
+export interface CompanyConnectionSubscription
+  extends Promise<AsyncIterator<CompanyConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CompanyEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCompanySubscription>() => T;
+}
+
+export interface Company {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface CompanyPromise extends Promise<Company>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  spots: <T = FragmentableArray<Spot>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CompanySubscription
+  extends Promise<AsyncIterator<Company>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  spots: <T = Promise<AsyncIterator<SpotSubscription>>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface CompanyNullablePromise
+  extends Promise<Company | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  spots: <T = FragmentableArray<Spot>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface Post {
@@ -630,6 +1359,48 @@ export interface PostNullablePromise
   author: <T = UserPromise>() => T;
 }
 
+export interface SpotEdge {
+  node: Spot;
+  cursor: String;
+}
+
+export interface SpotEdgePromise extends Promise<SpotEdge>, Fragmentable {
+  node: <T = SpotPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface SpotEdgeSubscription
+  extends Promise<AsyncIterator<SpotEdge>>,
+    Fragmentable {
+  node: <T = SpotSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface SpotSubscriptionPayload {
+  mutation: MutationType;
+  node: Spot;
+  updatedFields: String[];
+  previousValues: SpotPreviousValues;
+}
+
+export interface SpotSubscriptionPayloadPromise
+  extends Promise<SpotSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = SpotPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = SpotPreviousValuesPromise>() => T;
+}
+
+export interface SpotSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<SpotSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = SpotSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = SpotPreviousValuesSubscription>() => T;
+}
+
 export interface AggregatePost {
   count: Int;
 }
@@ -646,21 +1417,29 @@ export interface AggregatePostSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PostEdge {
-  node: Post;
-  cursor: String;
+export interface CompanySubscriptionPayload {
+  mutation: MutationType;
+  node: Company;
+  updatedFields: String[];
+  previousValues: CompanyPreviousValues;
 }
 
-export interface PostEdgePromise extends Promise<PostEdge>, Fragmentable {
-  node: <T = PostPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface PostEdgeSubscription
-  extends Promise<AsyncIterator<PostEdge>>,
+export interface CompanySubscriptionPayloadPromise
+  extends Promise<CompanySubscriptionPayload>,
     Fragmentable {
-  node: <T = PostSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = CompanyPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CompanyPreviousValuesPromise>() => T;
+}
+
+export interface CompanySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CompanySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CompanySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CompanyPreviousValuesSubscription>() => T;
 }
 
 export interface UserSubscriptionPayload {
@@ -688,6 +1467,58 @@ export interface UserSubscriptionPayloadSubscription
   previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface PostPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  published: Boolean;
+  title: String;
+  content: String;
+}
+
+export interface PostPreviousValuesPromise
+  extends Promise<PostPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  published: () => Promise<Boolean>;
+  title: () => Promise<String>;
+  content: () => Promise<String>;
+}
+
+export interface PostPreviousValuesSubscription
+  extends Promise<AsyncIterator<PostPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  title: () => Promise<AsyncIterator<String>>;
+  content: () => Promise<AsyncIterator<String>>;
+}
+
 export interface PostSubscriptionPayload {
   mutation: MutationType;
   node: Post;
@@ -713,64 +1544,135 @@ export interface PostSubscriptionPayloadSubscription
   previousValues: <T = PostPreviousValuesSubscription>() => T;
 }
 
-export interface PostConnection {
-  pageInfo: PageInfo;
-  edges: PostEdge[];
+export interface User {
+  id: ID_Output;
+  email: String;
+  password: String;
+  name: String;
+  role: Role;
 }
 
-export interface PostConnectionPromise
-  extends Promise<PostConnection>,
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  name: () => Promise<String>;
+  role: () => Promise<Role>;
+  posts: <T = FragmentableArray<Post>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  spots: <T = FragmentableArray<Spot>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PostEdge>>() => T;
-  aggregate: <T = AggregatePostPromise>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  role: () => Promise<AsyncIterator<Role>>;
+  posts: <T = Promise<AsyncIterator<PostSubscription>>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  spots: <T = Promise<AsyncIterator<SpotSubscription>>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
-export interface PostConnectionSubscription
-  extends Promise<AsyncIterator<PostConnection>>,
+export interface UserNullablePromise
+  extends Promise<User | null>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PostEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePostSubscription>() => T;
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  name: () => Promise<String>;
+  role: () => Promise<Role>;
+  posts: <T = FragmentableArray<Post>>(args?: {
+    where?: PostWhereInput;
+    orderBy?: PostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  spots: <T = FragmentableArray<Spot>>(args?: {
+    where?: SpotWhereInput;
+    orderBy?: SpotOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
+export interface CompanyPreviousValues {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
+export interface CompanyPreviousValuesPromise
+  extends Promise<CompanyPreviousValues>,
     Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface BatchPayload {
-  count: Long;
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface CompanyPreviousValuesSubscription
+  extends Promise<AsyncIterator<CompanyPreviousValues>>,
     Fragmentable {
-  count: () => Promise<Long>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface AggregateSpot {
+  count: Int;
+}
+
+export interface AggregateSpotPromise
+  extends Promise<AggregateSpot>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSpotSubscription
+  extends Promise<AsyncIterator<AggregateSpot>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AggregateUser {
@@ -789,120 +1691,50 @@ export interface AggregateUserSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface User {
-  id: ID_Output;
-  email: String;
-  password: String;
-  name: String;
-}
-
-export interface UserPromise extends Promise<User>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  name: () => Promise<String>;
-  posts: <T = FragmentableArray<Post>>(args?: {
-    where?: PostWhereInput;
-    orderBy?: PostOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<User>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  posts: <T = Promise<AsyncIterator<PostSubscription>>>(args?: {
-    where?: PostWhereInput;
-    orderBy?: PostOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface UserNullablePromise
-  extends Promise<User | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  name: () => Promise<String>;
-  posts: <T = FragmentableArray<Post>>(args?: {
-    where?: PostWhereInput;
-    orderBy?: PostOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
-export interface UserEdge {
-  node: User;
+export interface PostEdge {
+  node: Post;
   cursor: String;
 }
 
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
+export interface PostEdgePromise extends Promise<PostEdge>, Fragmentable {
+  node: <T = PostPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
+export interface PostEdgeSubscription
+  extends Promise<AsyncIterator<PostEdge>>,
     Fragmentable {
-  node: <T = UserSubscription>() => T;
+  node: <T = PostSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
+export interface SpotConnection {
+  pageInfo: PageInfo;
+  edges: SpotEdge[];
+}
 
-export type Long = string;
+export interface SpotConnectionPromise
+  extends Promise<SpotConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<SpotEdge>>() => T;
+  aggregate: <T = AggregateSpotPromise>() => T;
+}
 
-/*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-*/
-export type ID_Input = string | number;
-export type ID_Output = string;
+export interface SpotConnectionSubscription
+  extends Promise<AsyncIterator<SpotConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<SpotEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateSpotSubscription>() => T;
+}
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
+
+export type Long = string;
 
 /*
 DateTime scalar input type, allowing Date
@@ -915,9 +1747,20 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
 export type Int = number;
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
+
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
 
 /**
  * Model Metadata
@@ -929,7 +1772,19 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "Role",
+    embedded: false
+  },
+  {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "Company",
+    embedded: false
+  },
+  {
+    name: "Spot",
     embedded: false
   }
 ];

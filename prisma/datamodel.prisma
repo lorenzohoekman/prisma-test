@@ -8,10 +8,34 @@ type Post {
   author: User!
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 type User {
   id: ID! @id
   email: String! @unique
   password: String!
   name: String!
+  role: Role! @default (value: USER)
   posts: [Post!]!
+  spots: [Spot!]!
+}
+
+type Company{
+  id: ID! @id
+  name: String! @unique
+  spots: [Spot!]! 
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Spot{
+  id: ID! @id
+  name: String! @unique
+  company: Company!
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
