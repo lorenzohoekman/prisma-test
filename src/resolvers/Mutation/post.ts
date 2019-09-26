@@ -18,7 +18,7 @@ export const post = {
             )
         }
     */
-  async publish(parent, { id }, ctx: Context, info) {
+    async publish(parent, { id }, ctx: Context, info) {
         const userId = getUserId(ctx)
         const postExists = await ctx.prisma.$exists.post({
             id,

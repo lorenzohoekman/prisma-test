@@ -4,4 +4,7 @@ export const User = {
   posts: ({ id }, args, ctx: Context) => {
     return ctx.prisma.user({ id }).posts()
   },
+  role: ({ id }, args, ctx: Context) => {
+    return ctx.prisma.user({ id }).role()
+  },
 }
